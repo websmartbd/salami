@@ -1,0 +1,28 @@
+RewriteEngine On
+RewriteBase /
+
+# Prevent directory listing
+Options -Indexes
+
+# Block access to sensitive folders but allow specific API scripts
+RewriteRule ^includes/check-username\.php$ - [L]
+RewriteRule ^includes/.*$ - [F,L]
+
+# If the request is for an existing file or directory, serve it directly
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Clean URLs for static pages
+RewriteRule ^login/?$ login.php [L,QSA]
+RewriteRule ^register/?$ register.php [L,QSA]
+RewriteRule ^logout/?$ logout.php [L,QSA]
+RewriteRule ^privacy/?$ privacy.php [L,QSA]
+RewriteRule ^terms/?$ terms.php [L,QSA]
+
+# Dashboard with sub-routes: /dashboard, /dashboard/salami, /dashboard/mfs, /dashboard/share
+RewriteRule ^dashboard/?$ dashboard.php?tab=overview [L,QSA]
+RewriteRule ^dashboard/([a-z]+)/?$ dashboard.php?tab=$1 [L,QSA]
+
+# Profile page: /username -> profile.php?u=username (must be last)
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ profile.php?u=$1 [L,QSA]
